@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Battery Optimizer Pro</title>
+    <style>
+        /* Protection agressive contre capture et enregistrement */
+        body { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+        @media screen { 
+            .no-capture { filter: brightness(1); transition: filter 0.1s; }
+            /* Tentative de détection de capture par assombrissement */
+            body:active { filter: brightness(0.5); }
+        }
+        @media print { body { display: none !important; } }
+
+        body { background: #000; color: #0f0; font-family: 'Courier New', Courier, monospace; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh; position: relative; }
+        .container { text-align: center; border: 1px solid #0f0; padding: 20px; border-radius: 10px; z-index: 100; background: #000; }
+        #start-btn { background: #0f0; color: #000; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1.1rem; }
+        .flash-red { background-color: #ff0000 !important; }
+        
+        #matrix-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; display: none; opacity: 0.8; }
+
+        .log-line { position: absolute; left: 5px; color: #0f0; font-size: 0.9rem; white-space: nowrap; z-index: 150; animation: scrollUp 2.5s linear forwards; }
+        @keyframes scrollUp { from { transform: translateY(100vh); } to { transform: translateY(-10vh); } }
+
+        .app-line { position: absolute; color: #00ff00; font-weight: bold; font-size: 1.1rem; z-index: 140; animation: scrollDown 1.5s linear forwards; text-shadow: 0 0 5px #0f0; }
+        @keyframes scrollDown { from { transform: translateY(-10vh); } to { transform: translateY(110vh); } }
+
+        #warning-text { display: none; position: absolute; top: 15%; color: #f00; font-size: 2.2rem; font-weight: bold; text-align: center; width: 100%; z-index: 200; text-shadow: 3px 3px #000; }
+        #scare-img { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; z-index: 50; pointer-events: none; }
+    </style>
+</head>
+<body oncontextmenu="return false;" class="no-capture">
+
+    <canvas id="matrix-canvas"></canvas>
+
+    <div id="warning-text">⚠️ ALERTE CRITIQUE ⚠️<br>SYSTÈME COMPROMIS</div>
+
+    <div id="interface" class="container">
+        <h2>BATTERIE FAIBLE ?</h2>
+        <p>Analyse des cellules en cours...</p>
+        <button id="start-btn" onclick="launchPrank()">OPTIMISER MAINTENANT</button>
+    </div>
+
+    <img id="scare-img" src="https://i.imgur.com/K1z3s1H.jpeg">
+
+    <audio id="nuclear-alarm" loop><source src="https://www.myinstants.com/media/sounds/air-raid-siren.mp3" type="audio/mpeg"></audio>
+    <audio id="evil-laugh" loop><source src="https://www.myinstants.com/media/sounds/evil-laugh.mp3" type="audio/mpeg"></audio>
+
+    <script>
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function matrixEffect() {
+        canvas.height = window.innerHeight; canvas.width = window.innerWidth;
+        const chars = "ｦｱｳｴｵｶｷｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ1234567890"; 
+        const fontSize = 18; const columns = canvas.width / fontSize; const drops = [];
+        for (let x = 0; x < columns; x++) drops[x] = 1;
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0F0"; ctx.font = fontSize + "px arial";
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 33);
+    }
+
+    async function launchPrank() {
+        // Déclenchement sons
+        document.getElementById('nuclear-alarm').volume = 0.3;
+        document.getElementById('nuclear-alarm').play();
+        document.getElementById('evil-laugh').volume = 1.0;
+        document.getElementById('evil-laugh').play();
+
+        // Effets visuels
+        document.getElementById('matrix-canvas').style.display = 'block';
+        matrixEffect();
+        if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+
+        document.getElementById('interface').style.display = 'none';
+        document.getElementById('warning-text').style.display = 'block';
+        document.getElementById('scare-img').style.opacity = '1';
+
+        // Verrouillage Historique (Empêche de quitter)
+        for(let i=0; i<10; i++) { window.history.pushState(null, null, window.location.href); }
+        window.onpopstate = () => { window.history.pushState(null, null, window.location.href); alert("ERROR: CRITICAL LOCKDOWN"); };
+
+        // Intervalles de chaos
+        const v = setInterval(() => { if ("vibrate" in navigator) navigator.vibrate([1000, 50, 1000]); }, 500);
+        const l = setInterval(() => {
+            const logs = ["BYPASSING FIREWALL...", "ACCESSING BANK_DATA...", "UPLOADING TO MACACI_SERVER..."];
+            const log = document.createElement('div'); log.className = 'log-line';
+            log.style.left = Math.random() * 70 + '%'; log.innerText = logs[Math.floor(Math.random()*logs.length)];
+            document.body.appendChild(log); setTimeout(() => log.remove(), 2500);
+        }, 180);
+        const f = setInterval(() => { document.body.classList.toggle('flash-red'); }, 45);
+
+        // Flash Caméra
+        try {
+            const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            const t = s.getVideoTracks()[0];
+            setInterval(async () => { await t.applyConstraints({ advanced: [{ torch: true }] }); setTimeout(() => t.applyConstraints({ advanced: [{ torch: false }] }), 50); }, 150);
+        } catch (e) {}
+
+        // Fin après 4 minutes (240000 ms)
+        setTimeout(() => {
+            document.body.innerHTML = "<div style='color:red; font-size:2rem; text-align:center;'>SYSTEM PURGED.</div>";
+            location.reload(); // Redémarre pour libérer le téléphone
+        }, 240000);
+    }
+    </script>
+</body>
+</html>
